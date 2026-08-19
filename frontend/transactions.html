@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Transactions | Smart Expense Tracker</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <div class="app-container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <a href="dashboard.html" class="brand">
+        <div class="brand-icon"><i class="fas fa-wallet"></i></div>
+        <span class="brand-title">SmartExpense</span>
+        <span class="brand-badge">AI</span>
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="dashboard.html" class="nav-link"><i class="fas fa-chart-pie nav-icon"></i> Dashboard</a></li>
+        <li><a href="transactions.html" class="nav-link active"><i class="fas fa-receipt nav-icon"></i> Transactions</a></li>
+        <li><a href="budget.html" class="nav-link"><i class="fas fa-bullseye nav-icon"></i> Budgets</a></li>
+        <li><a href="http://localhost:5077/swagger" target="_blank" class="nav-link"><i class="fas fa-code nav-icon"></i> Swagger API</a></li>
+      </ul>
+
+      <div class="user-profile-bar">
+        <div id="navUserAvatar" class="user-avatar">U</div>
+        <div class="user-info">
+          <div id="navUserName" class="user-name">User</div>
+          <div id="navUserEmail" class="user-email">user@example.com</div>
+        </div>
+        <button class="btn-logout" onclick="logout()" title="Logout"><i class="fas fa-sign-out-alt"></i></button>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Transactions</h1>
+          <p class="page-subtitle">Track, filter, and manage your income &amp; expense history.</p>
+        </div>
+        <div>
+          <button class="btn btn-primary" onclick="openAddModal()"><i class="fas fa-plus"></i> Manual Entry</button>
+        </div>
+      </div>
+
+      <!-- Quick Entry Bar (Feature 2B) -->
+      <div class="quick-entry-card">
+        <div class="quick-entry-label"><i class="fas fa-bolt"></i> Quick Entry:</div>
+        <form id="quickExpenseForm" class="quick-entry-form">
+          <input type="text" id="quickInput" class="quick-input" placeholder="Type naturally, e.g. 'Suji 250' or 'Uber 180' or 'Amazon 1200'..." required>
+          <select id="quickPaymentMethod" class="form-control" style="width: 140px; padding: 10px 12px;">
+            <option value="UPI">UPI</option>
+            <option value="Cash">Cash</option>
+            <option value="Credit Card">Credit Card</option>
+            <option value="Debit Card">Debit Card</option>
+            <option value="Net Banking">Net Banking</option>
+          </select>
+          <button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane"></i> Add</button>
+        </form>
+      </div>
+
+      <!-- Filters & Data Table Card -->
+      <div class="card">
+        <div style="display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap;">
+          <input type="text" id="searchInput" class="form-control" placeholder="Search by description or category..." style="max-width: 300px;">
+          <select id="categoryFilter" class="form-control" style="max-width: 180px;">
+            <option value="">All Categories</option>
+          </select>
+          <select id="typeFilter" class="form-control" style="max-width: 150px;">
+            <option value="">All Types</option>
+            <option value="Expense">Expenses</option>
+            <option value="Income">Income</option>
+          </select>
+        </div>
+
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Description</th>
+                <th>Category</th>
+                <th>Type</th>
+                <th>Method</th>
+                <th>Amount</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="transactionsTableBody">
+              <!-- Rendered via JS -->
+            </tbody>
+          </table>
+        </div>
+
+        <div id="paginationControls" style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--gray-100);">
+          <!-- Rendered via JS -->
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Manual Add / Edit Transaction Modal -->
+  <div id="transactionModal" class="modal-backdrop">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h2 id="modalTitle" class="modal-title">Add Transaction</h2>
+        <button class="modal-close" onclick="closeModal()">&times;</button>
+      </div>
+      <form id="manualTransactionForm">
+        <input type="hidden" id="editTransactionId">
+        <div class="form-group">
+          <label class="form-label">Type</label>
+          <select id="manualType" class="form-control" required>
+            <option value="Expense">Expense</option>
+            <option value="Income">Income</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Amount (₹)</label>
+          <input type="number" id="manualAmount" class="form-control" step="0.01" min="0.01" placeholder="e.g. 450.00" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Category</label>
+          <select id="manualCategory" class="form-control" required>
+            <!-- Loaded dynamically -->
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Payment Method</label>
+          <select id="manualPaymentMethod" class="form-control" required>
+            <option value="UPI">UPI</option>
+            <option value="Cash">Cash</option>
+            <option value="Credit Card">Credit Card</option>
+            <option value="Debit Card">Debit Card</option>
+            <option value="Net Banking">Net Banking</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Date</label>
+          <input type="date" id="manualDate" class="form-control" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Description / Notes</label>
+          <input type="text" id="manualDescription" class="form-control" placeholder="e.g. Lunch with team">
+        </div>
+        <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 24px;">
+          <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Transaction</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script src="js/transactions.js"></script>
+</body>
+</html>

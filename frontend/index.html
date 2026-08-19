@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Expense Tracker with AI Insights | Academic Project</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .hero-section {
+      background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+      color: #ffffff;
+      padding: 80px 24px 100px;
+      text-align: center;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(79, 70, 229, 0.2);
+      border: 1px solid rgba(165, 180, 252, 0.3);
+      color: #a5b4fc;
+      padding: 6px 16px;
+      border-radius: var(--radius-full);
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 24px;
+    }
+    .hero-title {
+      font-size: 3rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+      max-width: 800px;
+      margin: 0 auto 20px;
+    }
+    .hero-desc {
+      font-size: 1.15rem;
+      color: var(--gray-300);
+      max-width: 650px;
+      margin: 0 auto 36px;
+    }
+    .feature-grid {
+      max-width: 1200px;
+      margin: -50px auto 60px;
+      padding: 0 24px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header style="background: var(--dark); padding: 18px 32px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--gray-800);">
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <div class="brand-icon"><i class="fas fa-wallet" style="color: white;"></i></div>
+      <span style="font-size: 1.25rem; font-weight: 800; color: white; letter-spacing: -0.02em;">SmartExpense.AI</span>
+    </div>
+    <div style="display: flex; gap: 12px; align-items: center;">
+      <a href="http://localhost:5077/swagger" target="_blank" class="btn btn-secondary btn-sm" style="color: var(--white); background: rgba(255,255,255,0.1);"><i class="fas fa-code"></i> Swagger API</a>
+      <a href="login.html" class="btn btn-primary btn-sm"><i class="fas fa-sign-in-alt"></i> Login / Register</a>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="hero-badge"><i class="fas fa-graduation-cap"></i> Group 13 — Academic College Project</div>
+    <h1 class="hero-title">Smart Expense Tracking with Real-Time Financial Intelligence</h1>
+    <p class="hero-desc">Experience intelligent natural-keyword quick entry (e.g. <em>"Suji 250"</em>), automated 50/30/20 budgeting rules, and database-backed AI insights.</p>
+    <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
+      <a href="login.html" class="btn btn-primary" style="padding: 14px 28px; font-size: 1rem;"><i class="fas fa-rocket"></i> Get Started Free</a>
+      <a href="http://localhost:5077/swagger" target="_blank" class="btn btn-secondary" style="padding: 14px 28px; font-size: 1rem; color: white; background: rgba(255,255,255,0.1);"><i class="fas fa-book"></i> API Documentation</a>
+    </div>
+  </section>
+
+  <!-- Key Features Grid -->
+  <section class="feature-grid">
+    <div class="card" style="border-top: 4px solid var(--primary);">
+      <div class="kpi-icon-wrap" style="background: var(--primary-light); color: var(--primary); margin-bottom: 16px;">
+        <i class="fas fa-bolt"></i>
+      </div>
+      <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 8px;">Quick Expense Entry</h3>
+      <p style="font-size: 0.9rem; color: var(--gray-600);">Type natural phrases like <code>"Suji 250"</code> or <code>"Uber 180"</code> to auto-recognize amounts, descriptions, and category tags without manual clicks.</p>
+    </div>
+
+    <div class="card" style="border-top: 4px solid var(--success);">
+      <div class="kpi-icon-wrap" style="background: var(--success-light); color: var(--success); margin-bottom: 16px;">
+        <i class="fas fa-chart-pie"></i>
+      </div>
+      <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 8px;">50/30/20 Financial Rule</h3>
+      <p style="font-size: 0.9rem; color: var(--gray-600);">Automatically computes Needs (50%), Wants (30%), and Savings (20%) percentages to guide healthy financial habits.</p>
+    </div>
+
+    <div class="card" style="border-top: 4px solid var(--warning);">
+      <div class="kpi-icon-wrap" style="background: var(--warning-light); color: var(--warning); margin-bottom: 16px;">
+        <i class="fas fa-bell"></i>
+      </div>
+      <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 8px;">Budget Threshold Alerts</h3>
+      <p style="font-size: 0.9rem; color: var(--gray-600);">Set monthly or category spending caps with real-time progress indicators and warning alerts when reaching 80% or 100%.</p>
+    </div>
+
+    <div class="card" style="border-top: 4px solid var(--secondary);">
+      <div class="kpi-icon-wrap" style="background: #e0f2fe; color: var(--secondary); margin-bottom: 16px;">
+        <i class="fas fa-robot"></i>
+      </div>
+      <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 8px;">AI Financial Chatbot</h3>
+      <p style="font-size: 0.9rem; color: var(--gray-600);">Ask plain English questions like <em>"How much did I spend on food?"</em> to get exact, database-verified calculations.</p>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer style="margin-top: auto; background: var(--dark); color: var(--gray-400); text-align: center; padding: 24px; font-size: 0.85rem; border-top: 1px solid var(--gray-800);">
+    <p>Smart Expense Tracker &bull; Academic Project &bull; Built with ASP.NET Core (.NET 8) Web API &amp; Vanilla JS</p>
+  </footer>
+
+</body>
+</html>

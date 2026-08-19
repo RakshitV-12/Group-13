@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login &amp; Register | Smart Expense Tracker</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <div class="auth-wrapper">
+    <div class="auth-card">
+      <div style="text-align: center; margin-bottom: 24px;">
+        <div class="brand-icon" style="margin: 0 auto 12px; width: 48px; height: 48px; font-size: 24px;">
+          <i class="fas fa-wallet" style="color: white;"></i>
+        </div>
+        <h2 style="font-size: 1.5rem; font-weight: 800; color: var(--gray-900);">Smart Expense Tracker</h2>
+        <p style="font-size: 0.85rem; color: var(--gray-500); margin-top: 4px;">Secure Personal Finance &amp; AI Insights</p>
+      </div>
+
+      <div class="auth-tabs">
+        <div id="loginTab" class="auth-tab active">Sign In</div>
+        <div id="registerTab" class="auth-tab">Create Account</div>
+      </div>
+
+      <!-- Login Form -->
+      <form id="loginForm">
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <input type="email" id="loginEmail" class="form-control" placeholder="you@example.com" required value="rakshit.demo@example.com">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input type="password" id="loginPassword" class="form-control" placeholder="••••••••" required value="Password@123">
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 8px;">Sign In</button>
+      </form>
+
+      <!-- Register Form -->
+      <form id="registerForm" style="display: none;">
+        <div class="form-group">
+          <label class="form-label">Full Name</label>
+          <input type="text" id="regFullName" class="form-control" placeholder="e.g. John Doe" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <input type="email" id="regEmail" class="form-control" placeholder="you@example.com" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password (Min. 6 characters)</label>
+          <input type="password" id="regPassword" class="form-control" placeholder="••••••••" required minlength="6">
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 8px;">Create Account</button>
+      </form>
+
+      <div style="text-align: center; margin-top: 24px; font-size: 0.8rem; color: var(--gray-400);">
+        <a href="index.html" style="color: var(--gray-500); text-decoration: none;"><i class="fas fa-arrow-left"></i> Back to Homepage</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+</body>
+</html>

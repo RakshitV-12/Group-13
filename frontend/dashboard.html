@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard | Smart Expense Tracker</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <div class="app-container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <a href="dashboard.html" class="brand">
+        <div class="brand-icon"><i class="fas fa-wallet"></i></div>
+        <span class="brand-title">SmartExpense</span>
+        <span class="brand-badge">AI</span>
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="dashboard.html" class="nav-link active"><i class="fas fa-chart-pie nav-icon"></i> Dashboard</a></li>
+        <li><a href="transactions.html" class="nav-link"><i class="fas fa-receipt nav-icon"></i> Transactions</a></li>
+        <li><a href="budget.html" class="nav-link"><i class="fas fa-bullseye nav-icon"></i> Budgets</a></li>
+        <li><a href="http://localhost:5077/swagger" target="_blank" class="nav-link"><i class="fas fa-code nav-icon"></i> Swagger API</a></li>
+      </ul>
+
+      <div class="user-profile-bar">
+        <div id="navUserAvatar" class="user-avatar">U</div>
+        <div class="user-info">
+          <div id="navUserName" class="user-name">User</div>
+          <div id="navUserEmail" class="user-email">user@example.com</div>
+        </div>
+        <button class="btn-logout" onclick="logout()" title="Logout"><i class="fas fa-sign-out-alt"></i></button>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Financial Dashboard</h1>
+          <p class="page-subtitle">Real-time overview of your monthly cash flow, budget rules &amp; AI insights.</p>
+        </div>
+        <div>
+          <a href="transactions.html" class="btn btn-primary"><i class="fas fa-plus"></i> Add Transaction</a>
+        </div>
+      </div>
+
+      <!-- Quick Expense Entry Bar (Feature 2B) -->
+      <div class="quick-entry-card">
+        <div class="quick-entry-label"><i class="fas fa-bolt"></i> Quick Entry:</div>
+        <form id="dashQuickForm" class="quick-entry-form">
+          <input type="text" id="dashQuickInput" class="quick-input" placeholder="Type naturally, e.g. 'Suji 250' or 'Uber 180' or 'Amazon 1200'..." required>
+          <button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane"></i> Add</button>
+        </form>
+      </div>
+
+      <!-- KPI Grid -->
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-header">
+            <span class="kpi-title">Total Income</span>
+            <div class="kpi-icon-wrap icon-income"><i class="fas fa-arrow-down"></i></div>
+          </div>
+          <div id="totalIncome" class="kpi-value">₹0.00</div>
+          <div class="kpi-subtext">Current month earnings</div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-header">
+            <span class="kpi-title">Total Expenses</span>
+            <div class="kpi-icon-wrap icon-expense"><i class="fas fa-arrow-up"></i></div>
+          </div>
+          <div id="totalExpenses" class="kpi-value">₹0.00</div>
+          <div class="kpi-subtext">Current month spend</div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-header">
+            <span class="kpi-title">Net Savings</span>
+            <div class="kpi-icon-wrap icon-savings"><i class="fas fa-piggy-bank"></i></div>
+          </div>
+          <div id="totalSavings" class="kpi-value">₹0.00</div>
+          <div class="kpi-subtext">Income minus expenses</div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-header">
+            <span class="kpi-title">Savings Rate</span>
+            <div class="kpi-icon-wrap icon-rate"><i class="fas fa-percentage"></i></div>
+          </div>
+          <div id="savingsPercentage" class="kpi-value">0%</div>
+          <div class="kpi-subtext">Target: at least 20%</div>
+        </div>
+      </div>
+
+      <!-- 50/30/20 Financial Rule Banner -->
+      <div class="rule-card">
+        <div class="rule-header">
+          <div class="rule-title"><i class="fas fa-balance-scale"></i> 50/30/20 Financial Rule Status</div>
+          <span id="ruleStatusBadge" class="rule-badge">Evaluating...</span>
+        </div>
+        <p id="ruleRecommendation" style="font-size: 0.9rem; color: #cbd5e1;">Tracking essential needs, discretionary wants, and savings against income.</p>
+        <div class="rule-bars">
+          <div class="rule-item">
+            <div class="rule-item-header">
+              <span>Needs (Max 50%)</span>
+              <strong id="pctNeeds">0%</strong>
+            </div>
+            <div class="rule-progress">
+              <div id="barNeeds" class="rule-progress-bar bar-needs" style="width: 0%;"></div>
+            </div>
+          </div>
+          <div class="rule-item">
+            <div class="rule-item-header">
+              <span>Wants (Max 30%)</span>
+              <strong id="pctWants">0%</strong>
+            </div>
+            <div class="rule-progress">
+              <div id="barWants" class="rule-progress-bar bar-wants" style="width: 0%;"></div>
+            </div>
+          </div>
+          <div class="rule-item">
+            <div class="rule-item-header">
+              <span>Savings (Min 20%)</span>
+              <strong id="pctSavings">0%</strong>
+            </div>
+            <div class="rule-progress">
+              <div id="barSavings" class="rule-progress-bar bar-savings" style="width: 0%;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dashboard 2-Column Grid -->
+      <div class="dashboard-grid">
+        <!-- Left: Trends & Recent Transactions -->
+        <div style="display: flex; flex-direction: column; gap: 24px;">
+          <div class="card">
+            <div class="card-header">
+              <h2 class="card-title"><i class="fas fa-chart-column" style="color: var(--primary); margin-right: 8px;"></i> 6-Month Spending Trends</h2>
+            </div>
+            <div id="monthlyTrendsContainer">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h2 class="card-title"><i class="fas fa-receipt" style="color: var(--primary); margin-right: 8px;"></i> Recent Transactions</h2>
+              <a href="transactions.html" style="font-size: 0.85rem; color: var(--primary); text-decoration: none; font-weight: 600;">View All &rarr;</a>
+            </div>
+            <div class="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Description</th>
+                    <th>Category</th>
+                    <th>Method</th>
+                    <th>Date</th>
+                    <th>Amount</th>
+                  </tr>
+                </thead>
+                <tbody id="recentTransactionsBody">
+                  <!-- Rendered via JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Category Expenses Breakdown -->
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title"><i class="fas fa-pie-chart" style="color: var(--primary); margin-right: 8px;"></i> Category Expenses</h2>
+          </div>
+          <div id="categoryBreakdownList" class="category-list">
+            <!-- Rendered via JS -->
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- AI Floating Chatbot Widget (Feature 8) -->
+  <div id="aiChatFab" class="ai-fab" title="Ask AI Financial Insights">
+    <i class="fas fa-robot"></i>
+  </div>
+
+  <div id="aiChatDrawer" class="ai-chat-drawer">
+    <div class="chat-header">
+      <div class="chat-title"><i class="fas fa-brain" style="color: #38bdf8;"></i> AI Financial Insights</div>
+      <button id="closeChatBtn" style="background: none; border: none; color: white; cursor: pointer; font-size: 1.1rem;"><i class="fas fa-times"></i></button>
+    </div>
+    <div id="chatBody" class="chat-body">
+      <div class="chat-bubble bot">
+        Hello! I'm your Smart Expense AI assistant. I analyze your actual database records. Ask me anything or tap below:
+      </div>
+      <!-- Quick Prompts -->
+      <div style="display: flex; flex-direction: column; gap: 6px; margin: 4px 0;">
+        <button class="btn btn-secondary btn-sm" style="text-align: left; font-size: 0.75rem; justify-content: flex-start;" onclick="sendQuickPrompt('How much did I spend this month?')">💡 How much did I spend this month?</button>
+        <button class="btn btn-secondary btn-sm" style="text-align: left; font-size: 0.75rem; justify-content: flex-start;" onclick="sendQuickPrompt('How much did I spend on food?')">🍔 How much did I spend on food?</button>
+        <button class="btn btn-secondary btn-sm" style="text-align: left; font-size: 0.75rem; justify-content: flex-start;" onclick="sendQuickPrompt('Where is most of my money going?')">📊 Where is most of my money going?</button>
+        <button class="btn btn-secondary btn-sm" style="text-align: left; font-size: 0.75rem; justify-content: flex-start;" onclick="sendQuickPrompt('Am I following the 50/30/20 rule?')">⚖️ Am I following the 50/30/20 rule?</button>
+      </div>
+    </div>
+    <form id="chatForm" class="chat-footer">
+      <input type="text" id="chatInput" class="form-control" placeholder="Ask about your expenses..." required style="padding: 8px 12px; font-size: 0.85rem;">
+      <button type="submit" class="btn btn-primary" style="padding: 8px 12px;"><i class="fas fa-paper-plane"></i></button>
+    </form>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script src="js/dashboard.js"></script>
+  <script src="js/ai-chatbot.js"></script>
+</body>
+</html>

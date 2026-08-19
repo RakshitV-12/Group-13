@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Budgets | Smart Expense Tracker</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <div class="app-container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <a href="dashboard.html" class="brand">
+        <div class="brand-icon"><i class="fas fa-wallet"></i></div>
+        <span class="brand-title">SmartExpense</span>
+        <span class="brand-badge">AI</span>
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="dashboard.html" class="nav-link"><i class="fas fa-chart-pie nav-icon"></i> Dashboard</a></li>
+        <li><a href="transactions.html" class="nav-link"><i class="fas fa-receipt nav-icon"></i> Transactions</a></li>
+        <li><a href="budget.html" class="nav-link active"><i class="fas fa-bullseye nav-icon"></i> Budgets</a></li>
+        <li><a href="http://localhost:5077/swagger" target="_blank" class="nav-link"><i class="fas fa-code nav-icon"></i> Swagger API</a></li>
+      </ul>
+
+      <div class="user-profile-bar">
+        <div id="navUserAvatar" class="user-avatar">U</div>
+        <div class="user-info">
+          <div id="navUserName" class="user-name">User</div>
+          <div id="navUserEmail" class="user-email">user@example.com</div>
+        </div>
+        <button class="btn-logout" onclick="logout()" title="Logout"><i class="fas fa-sign-out-alt"></i></button>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Budget Management</h1>
+          <p class="page-subtitle">Set monthly and category spending limits with automated threshold warnings.</p>
+        </div>
+        <div>
+          <button class="btn btn-primary" onclick="openBudgetModal()"><i class="fas fa-plus"></i> Set Budget</button>
+        </div>
+      </div>
+
+      <!-- Budget Cards Grid -->
+      <div id="budgetCardsContainer" class="kpi-grid">
+        <!-- Rendered via JS -->
+      </div>
+    </main>
+  </div>
+
+  <!-- Set Budget Modal -->
+  <div id="budgetModal" class="modal-backdrop">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h2 class="modal-title">Configure Budget</h2>
+        <button class="modal-close" onclick="closeBudgetModal()">&times;</button>
+      </div>
+      <form id="setBudgetForm">
+        <div class="form-group">
+          <label class="form-label">Scope</label>
+          <select id="budgetCategory" class="form-control">
+            <option value="">Overall Monthly Budget (All Categories)</option>
+            <!-- Loaded dynamically -->
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Monthly Spending Limit (₹)</label>
+          <input type="number" id="budgetAmount" class="form-control" step="1" min="1" placeholder="e.g. 5000" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Warning Alert Threshold (%)</label>
+          <input type="number" id="budgetThreshold" class="form-control" value="80" min="1" max="100" required>
+          <small style="color: var(--gray-500); font-size: 0.75rem;">Triggers a visual warning when spending reaches this percentage.</small>
+        </div>
+        <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 24px;">
+          <button type="button" class="btn btn-secondary" onclick="closeBudgetModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Budget</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script src="js/budget.js"></script>
+</body>
+</html>
