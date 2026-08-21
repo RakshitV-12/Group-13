@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 async function loadCategories() {
   try {
     categoriesList = await api.get('/categories');
-    
+
     // Populate filter dropdown
     const filterSelect = document.getElementById('categoryFilter');
     const modalSelect = document.getElementById('manualCategory');
@@ -207,7 +207,7 @@ async function deleteTransaction(id) {
 
 function debounce(func, delay) {
   let timeout;
-  return function(...args) {
+  return function (...args) {
     clearTimeout(timeout);
     timeout = setTimeout(() => func.apply(this, args), delay);
   };
