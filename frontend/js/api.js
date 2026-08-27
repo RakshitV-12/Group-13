@@ -1,8 +1,8 @@
 // =========================================================================
-// API Helper & Centralized Fetch Client
+// WalletWise AI - API Helper & Centralized Fetch Client
 // =========================================================================
 
-const API_BASE_URL = 'http://localhost:5077/api';
+const API_BASE_URL = '/api';
 
 const api = {
   getToken() {
@@ -16,19 +16,28 @@ const api = {
 
   setSession(token, user) {
     localStorage.setItem('token', token);
-    localStorage.setItem('user', JSON.stringify(user));
+    if (user) {
+      localStorage.setItem('user', JSON.stringify(user));
+    }
   },
 
   clearSession() {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
+    sessionStorage.clear();
+  },
+
+  isLoggedIn() {
+    const token = this.getToken();
+    return !!token && token !== 'null' && token !== 'undefined';
   },
 
   async request(endpoint, options = {}) {
     const token = this.getToken();
+
     const headers = {
       'Content-Type': 'application/json',
-      ...options.headers
+      ...(options.headers || {})
     };
 
     if (token) {
@@ -43,10 +52,11 @@ const api = {
 
       if (response.status === 401) {
         this.clearSession();
-        if (!window.location.pathname.includes('login.html') && !window.location.pathname.includes('index.html')) {
-          window.location.href = 'login.html';
+        const currentPath = window.location.pathname.toLowerCase();
+        if (!currentPath.endsWith('login.html') && !currentPath.endsWith('index.html') && currentPath !== '/' && currentPath !== '') {
+          window.location.replace('login.html');
         }
-        throw new Error('Session expired. Please log in again.');
+        throw new Error('Session expired or unauthorized. Please sign in again.');
       }
 
       if (response.status === 204) {
@@ -56,7 +66,7 @@ const api = {
       const data = await response.json().catch(() => null);
 
       if (!response.ok) {
-        const errorMsg = data?.message || (data?.errors ? Object.values(data.errors).flat().join(', ') : 'An error occurred');
+        const errorMsg = data?.message || (data?.errors ? Object.values(data.errors).flat().join(', ') : `HTTP Error ${response.status}`);
         throw new Error(errorMsg);
       }
 
@@ -75,6 +85,29 @@ const api = {
     return this.request(endpoint, {
       method: 'POST',
       body: JSON.stringify(body)
+    });
+  },
+
+  upload(endpoint, formData) {
+    const token = this.getToken();
+    const headers = {};
+    if (token) headers['Authorization'] = `Bearer ${token}`;
+
+    return fetch(`${API_BASE_URL}${endpoint}`, {
+      method: 'POST',
+      headers,
+      body: formData
+    }).then(async (response) => {
+      if (response.status === 401) {
+        this.clearSession();
+        window.location.replace('login.html');
+        throw new Error('Unauthorized.');
+      }
+      const data = await response.json().catch(() => null);
+      if (!response.ok) {
+        throw new Error(data?.message || 'Upload failed');
+      }
+      return data;
     });
   },
 
@@ -97,22 +130,35 @@ function showToast(message, type = 'info') {
     container = document.createElement('div');
     container.id = 'toastContainer';
     container.className = 'toast-container';
+    container.style.cssText = 'position:fixed;bottom:24px;left:24px;z-index:99999;display:flex;flex-direction:column;gap:8px;pointer-events:none;';
     document.body.appendChild(container);
   }
 
   const toast = document.createElement('div');
   toast.className = `toast toast-${type}`;
+  const bg = type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : '#1e293b';
+  toast.style.cssText = `padding:12px 20px;border-radius:10px;background:${bg};color:#ffffff;font-weight:600;font-size:13px;box-shadow:0 10px 25px rgba(0,0,0,0.2);`;
   toast.textContent = message;
   container.appendChild(toast);
 
   setTimeout(() => {
-    toast.remove();
-  }, 4000);
+    toast.style.opacity = '0';
+    toast.style.transform = 'translateY(10px)';
+    toast.style.transition = 'all 0.3s ease';
+    setTimeout(() => toast.remove(), 300);
+  }, 3500);
 }
 
-// Authentication Check Guard
 function requireAuth() {
-  if (!api.getToken()) {
-    window.location.href = 'login.html';
+  if (!api.isLoggedIn()) {
+    const currentPath = window.location.pathname.toLowerCase();
+    if (!currentPath.endsWith('login.html') && !currentPath.endsWith('index.html') && currentPath !== '/' && currentPath !== '') {
+      window.location.replace('login.html');
+    }
   }
+}
+
+function logout() {
+  api.clearSession();
+  window.location.replace('index.html');
 }
