@@ -14,6 +14,8 @@ namespace ExpenseTracker.DTOs
         [Required]
         public int CategoryId { get; set; }
 
+        public long? ReceiptId { get; set; }
+
         public DateTime TransactionDate { get; set; } = DateTime.UtcNow;
 
         public string PaymentMethod { get; set; } = "UPI";
@@ -52,8 +54,7 @@ namespace ExpenseTracker.DTOs
         [Required]
         public string Type { get; set; } = "Expense";
 
-        [Required]
-        public int CategoryId { get; set; }
+        public int? CategoryId { get; set; }
 
         public DateTime TransactionDate { get; set; }
 
@@ -70,6 +71,7 @@ namespace ExpenseTracker.DTOs
         public decimal Amount { get; set; }
         public string Type { get; set; } = "Expense";
         public int CategoryId { get; set; }
+        public long? ReceiptId { get; set; }
         public string CategoryName { get; set; } = string.Empty;
         public string? CategoryIcon { get; set; }
         public string? CategoryColor { get; set; }
@@ -77,6 +79,30 @@ namespace ExpenseTracker.DTOs
         public string PaymentMethod { get; set; } = string.Empty;
         public string? Description { get; set; }
         public DateTime CreatedAt { get; set; }
+    }
+
+    public class TransactionBalanceContextDto
+    {
+        public long TransactionId { get; set; }
+        public string Description { get; set; } = string.Empty;
+        public string Type { get; set; } = "Expense";
+        public string TransactionType => Type;
+        public decimal BalanceBefore { get; set; }
+        public decimal TransactionAmount { get; set; }
+        public decimal BalanceAfter { get; set; }
+        public DateTime TransactionDate { get; set; }
+        public string PaymentMethod { get; set; } = string.Empty;
+        public string? CategoryName { get; set; }
+    }
+
+    public class ReceiptUploadResponseDto
+    {
+        public long ReceiptId { get; set; }
+        public string FileName { get; set; } = string.Empty;
+        public string ContentType { get; set; } = string.Empty;
+        public long FileSize { get; set; }
+        public string RelativePath { get; set; } = string.Empty;
+        public DateTime UploadedAt { get; set; } = DateTime.UtcNow;
     }
 
     public class PagedResult<T>

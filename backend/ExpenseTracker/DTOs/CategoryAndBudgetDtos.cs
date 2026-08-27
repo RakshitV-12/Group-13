@@ -28,6 +28,7 @@ namespace ExpenseTracker.DTOs
 
     public class CreateBudgetDto
     {
+        public string? Name { get; set; }
         public int? CategoryId { get; set; }
 
         [Required]
@@ -49,6 +50,7 @@ namespace ExpenseTracker.DTOs
     {
         public int BudgetId { get; set; }
         public string UserId { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
         public int? CategoryId { get; set; }
         public string CategoryName { get; set; } = "Overall";
         public string? CategoryIcon { get; set; }
@@ -63,6 +65,7 @@ namespace ExpenseTracker.DTOs
     public class BudgetStatusDto
     {
         public int BudgetId { get; set; }
+        public string Name { get; set; } = string.Empty;
         public int? CategoryId { get; set; }
         public string CategoryName { get; set; } = "Overall";
         public decimal BudgetAmount { get; set; }
