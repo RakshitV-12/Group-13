@@ -1,218 +1,1722 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard | Smart Expense Tracker</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WalletWise AI - Financial Dashboard</title>
+  
+  <!-- Immediate Auth Guard: Redirect if no JWT token -->
+  <script>
+    if (!localStorage.getItem('token')) {
+      window.location.replace('login.html');
+    }
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link rel="stylesheet" href="css/style.css">
+  <style>
+    :root {
+      --bg: #f4f5f8;
+      --card: #ffffff;
+      --stroke: #eaecf0;
+      --stroke-dark: #d0d5dd;
+      --text-main: #101828;
+      --text-muted: #667085;
+      --primary: #5c4ee5;
+      --primary-hover: #4b3ecb;
+      --primary-soft: #efeaff;
+      --primary-border: #dcd7fe;
+      --green: #10b981;
+      --green-soft: #ecfdf5;
+      --orange: #f59e0b;
+      --danger: #ef4444;
+      --danger-soft: #fef2f2;
+      --navy-card: #1e293b;
+      --shadow-sm: 0 1px 3px rgba(16, 24, 40, 0.05);
+      --shadow-md: 0 4px 16px rgba(16, 24, 40, 0.06);
+      --radius-sm: 10px;
+      --radius-md: 14px;
+      --radius-lg: 18px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text-main);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+    button, input, select, textarea { font: inherit; }
+    button { cursor: pointer; border: none; background: transparent; }
+
+    .layout {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Left Sidebar */
+    .sidebar {
+      width: 250px;
+      background: #ffffff;
+      border-right: 1px solid var(--stroke);
+      padding: 20px 14px;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      z-index: 10;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 4px 8px 20px;
+      text-decoration: none;
+    }
+    .brand-mark {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+      display: grid;
+      place-items: center;
+      color: #ffffff;
+      font-size: 18px;
+      font-weight: 800;
+      box-shadow: 0 4px 12px rgba(92, 78, 229, 0.3);
+    }
+    .brand-info {
+      display: flex;
+      flex-direction: column;
+    }
+    .brand-title {
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--text-main);
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+    }
+    .brand-subtitle {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .nav {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .nav-btn {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      text-align: left;
+      font-size: 14px;
+      color: #475569;
+      font-weight: 600;
+      transition: all 0.15s ease;
+    }
+    .nav-btn:hover {
+      background: #f8fafc;
+      color: var(--text-main);
+    }
+    .nav-btn.active {
+      background: var(--primary-soft);
+      color: var(--primary);
+      font-weight: 700;
+    }
+    .nav-icon {
+      width: 20px;
+      height: 20px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Account Card Footer (NO PERSONAL NAME) */
+    .sidebar-footer {
+      padding: 14px;
+      border-radius: var(--radius-md);
+      background: #f8fafc;
+      border: 1px solid var(--stroke);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .user-profile-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      overflow: hidden;
+    }
+    .user-avatar {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+      color: #ffffff;
+      display: grid;
+      place-items: center;
+      font-weight: 700;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+    .user-details {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .user-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-main);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .user-email {
+      font-size: 11px;
+      color: var(--text-muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .logout-action-btn {
+      color: var(--text-muted);
+      font-size: 15px;
+      padding: 8px;
+      border-radius: 8px;
+      transition: all 0.15s;
+    }
+    .logout-action-btn:hover {
+      color: var(--danger);
+      background: var(--danger-soft);
+    }
+
+    /* Main Area */
+    .main {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Top Bar */
+    .topbar {
+      height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 32px;
+      background: rgba(255, 255, 255, 0.95);
+      border-bottom: 1px solid var(--stroke);
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      backdrop-filter: blur(8px);
+    }
+    .topbar-header {
+      display: flex;
+      flex-direction: column;
+    }
+    .topbar-subtitle {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: #94a3b8;
+      text-transform: uppercase;
+    }
+    .topbar-title {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--text-main);
+      letter-spacing: -0.03em;
+    }
+
+    .topbar-actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    /* Action Buttons */
+    .btn {
+      appearance: none;
+      border: 1px solid var(--stroke);
+      background: #ffffff;
+      color: #334155;
+      border-radius: var(--radius-sm);
+      padding: 9px 16px;
+      font-size: 14px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.15s ease;
+      box-shadow: var(--shadow-sm);
+    }
+    .btn:hover {
+      background: #f8fafc;
+      border-color: var(--stroke-dark);
+    }
+    .btn.primary {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #ffffff;
+      box-shadow: 0 2px 8px rgba(92, 78, 229, 0.25);
+    }
+    .btn.primary:hover {
+      background: var(--primary-hover);
+      border-color: var(--primary-hover);
+    }
+    .btn.secondary {
+      background: var(--primary-soft);
+      border-color: var(--primary-border);
+      color: var(--primary);
+    }
+    .btn.secondary:hover {
+      background: #e2dafe;
+    }
+    .btn.danger {
+      background: var(--danger-soft);
+      border-color: #fecaca;
+      color: var(--danger);
+    }
+    .btn.danger:hover {
+      background: #fee2e2;
+    }
+
+    /* Content Area */
+    .content {
+      padding: 28px 32px 48px;
+      flex: 1;
+    }
+
+    /* Panels & Cards */
+    .panel {
+      background: var(--card);
+      border: 1px solid var(--stroke);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-sm);
+      padding: 24px;
+    }
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 20px;
+    }
+    .panel-title-group h2 {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--text-main);
+      letter-spacing: -0.03em;
+      line-height: 1.2;
+    }
+    .panel-title-group p {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    /* Summary Grid */
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 18px;
+      margin-bottom: 24px;
+    }
+    .summary-card {
+      padding: 20px;
+    }
+    .summary-card h3 {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+    .summary-value {
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      color: var(--text-main);
+    }
+
+    /* Toolbar & Inputs */
+    .toolbar {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .filters-group {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .search-input-wrap {
+      position: relative;
+      min-width: 280px;
+      flex: 1;
+    }
+    .search-input-wrap svg {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #94a3b8;
+    }
+    .search-input-wrap input {
+      width: 100%;
+      padding-left: 40px;
+    }
+
+    input, select, textarea {
+      height: 42px;
+      border: 1px solid var(--stroke);
+      border-radius: var(--radius-sm);
+      background: #ffffff;
+      padding: 8px 14px;
+      font-size: 14px;
+      color: var(--text-main);
+      outline: none;
+      transition: border-color 0.15s ease;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(92, 78, 229, 0.12);
+    }
+
+    /* Tables */
+    .table-container {
+      overflow-x: auto;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--stroke);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #ffffff;
+      text-align: left;
+    }
+    th {
+      background: #f8fafc;
+      padding: 12px 16px;
+      font-size: 11px;
+      font-weight: 700;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border-bottom: 1px solid var(--stroke);
+    }
+    td {
+      padding: 14px 16px;
+      font-size: 14px;
+      color: var(--text-main);
+      border-bottom: 1px solid var(--stroke);
+      vertical-align: middle;
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: #fafafd; }
+
+    /* Money text styling */
+    .money-pos { color: var(--green); font-weight: 700; }
+    .money-neg { color: var(--text-main); font-weight: 700; }
+
+    /* Budgets Grid & Cards */
+    .budgets-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+    }
+    .budget-card {
+      background: #ffffff;
+      border: 1px solid var(--stroke);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      box-shadow: var(--shadow-sm);
+    }
+    .budget-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .budget-cat-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .budget-cat-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: var(--primary-soft);
+      color: var(--primary);
+      display: grid;
+      place-items: center;
+      font-weight: 700;
+    }
+    .budget-cat-name {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .budget-amounts {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+    }
+    .budget-spent {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+    .budget-limit {
+      font-size: 14px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+    .budget-progress-bg {
+      height: 8px;
+      border-radius: 999px;
+      background: #f1f5f9;
+      overflow: hidden;
+    }
+    .budget-progress-bar {
+      height: 100%;
+      border-radius: 999px;
+      background: var(--primary);
+      transition: width 0.3s ease;
+    }
+    .budget-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    /* Modals */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.45);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 50;
+      backdrop-filter: blur(4px);
+    }
+    .modal-backdrop.open { display: flex; }
+    .modal {
+      width: min(560px, 94vw);
+      max-height: 90vh;
+      overflow: auto;
+      background: #ffffff;
+      border-radius: var(--radius-lg);
+      box-shadow: 0 20px 50px rgba(15, 23, 42, 0.2);
+      border: 1px solid var(--stroke);
+      padding: 24px;
+    }
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .modal-header h3 {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+    .close-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: #f1f5f9;
+      color: #64748b;
+      font-size: 18px;
+      display: grid;
+      place-items: center;
+    }
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+    .full { grid-column: 1 / -1; }
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .input-group label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 24px;
+    }
+
+    /* Floating AI Chatbot */
+    .ai-fab {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+      color: #ffffff;
+      display: grid;
+      place-items: center;
+      box-shadow: 0 8px 24px rgba(92, 78, 229, 0.4);
+      z-index: 40;
+      transition: transform 0.2s ease;
+    }
+    .ai-fab:hover { transform: scale(1.05); }
+
+    .ai-drawer {
+      position: fixed;
+      bottom: 90px;
+      right: 24px;
+      width: 380px;
+      height: 520px;
+      background: #ffffff;
+      border-radius: var(--radius-lg);
+      box-shadow: 0 20px 50px rgba(15, 23, 42, 0.18);
+      border: 1px solid var(--stroke);
+      display: none;
+      flex-direction: column;
+      z-index: 40;
+      overflow: hidden;
+    }
+    .ai-drawer.open { display: flex; }
+    .ai-drawer-header {
+      background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+      color: #ffffff;
+      padding: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .ai-drawer-header h4 { font-size: 16px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+    .ai-drawer-body {
+      flex: 1;
+      padding: 16px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      background: #f8fafc;
+    }
+    .chat-bubble {
+      max-width: 85%;
+      padding: 10px 14px;
+      border-radius: 14px;
+      font-size: 13px;
+      line-height: 1.4;
+    }
+    .chat-bubble.bot {
+      background: #ffffff;
+      color: var(--text-main);
+      border: 1px solid var(--stroke);
+      align-self: flex-start;
+      border-bottom-left-radius: 2px;
+    }
+    .chat-bubble.user {
+      background: var(--primary);
+      color: #ffffff;
+      align-self: flex-end;
+      border-bottom-right-radius: 2px;
+    }
+    .ai-drawer-footer {
+      padding: 12px;
+      border-top: 1px solid var(--stroke);
+      background: #ffffff;
+      display: flex;
+      gap: 8px;
+    }
+    .ai-drawer-footer input { flex: 1; height: 38px; }
+
+    /* Empty state */
+    .empty-state {
+      padding: 32px;
+      border: 1px dashed var(--stroke-dark);
+      border-radius: var(--radius-md);
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 14px;
+      background: #fafafd;
+    }
+
+    @media (max-width: 960px) {
+      .summary-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .budgets-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 720px) {
+      .sidebar { display: none; }
+      .topbar { padding: 0 16px; }
+      .content { padding: 16px; }
+      .summary-grid { grid-template-columns: 1fr; }
+      .budgets-grid { grid-template-columns: 1fr; }
+      .ai-drawer { width: calc(100vw - 32px); right: 16px; }
+    }
+  </style>
 </head>
 <body>
 
-  <div class="app-container">
-    <!-- Sidebar -->
+  <div class="layout">
+    <!-- Left Sidebar -->
     <aside class="sidebar">
-      <a href="dashboard.html" class="brand">
-        <div class="brand-icon"><i class="fas fa-wallet"></i></div>
-        <span class="brand-title">SmartExpense</span>
-        <span class="brand-badge">AI</span>
-      </a>
+      <div>
+        <a href="dashboard.html" class="brand" title="WalletWise AI Dashboard">
+          <div class="brand-mark"><i class="fas fa-wallet" style="font-size:18px;"></i></div>
+          <div class="brand-info">
+            <span class="brand-title">WalletWise AI</span>
+            <span class="brand-subtitle">Financial Manager</span>
+          </div>
+        </a>
 
-      <ul class="nav-links">
-        <li><a href="dashboard.html" class="nav-link active"><i class="fas fa-chart-pie nav-icon"></i> Dashboard</a></li>
-        <li><a href="transactions.html" class="nav-link"><i class="fas fa-receipt nav-icon"></i> Transactions</a></li>
-        <li><a href="budget.html" class="nav-link"><i class="fas fa-bullseye nav-icon"></i> Budgets</a></li>
-        <li><a href="http://localhost:5077/swagger" target="_blank" class="nav-link"><i class="fas fa-code nav-icon"></i> Swagger API</a></li>
-      </ul>
+        <nav class="nav" id="sidebarNav"></nav>
+      </div>
 
-      <div class="user-profile-bar">
-        <div id="navUserAvatar" class="user-avatar">U</div>
-        <div class="user-info">
-          <div id="navUserName" class="user-name">User</div>
-          <div id="navUserEmail" class="user-email">user@example.com</div>
+      <!-- Account Info (GENERIC - NO PERSONAL NAME HARDCODED) -->
+      <div class="sidebar-footer">
+        <div class="user-profile-info">
+          <div class="user-avatar" id="sidebarAvatar">U</div>
+          <div class="user-details">
+            <span class="user-name" id="sidebarName">My Account</span>
+            <span class="user-email" id="sidebarEmail">Active Session</span>
+          </div>
         </div>
-        <button class="btn-logout" onclick="logout()" title="Logout"><i class="fas fa-sign-out-alt"></i></button>
+        <button id="logoutBtn" class="logout-action-btn" title="Logout" onclick="logout()">
+          <i class="fas fa-sign-out-alt"></i>
+        </button>
       </div>
     </aside>
 
     <!-- Main Content -->
-    <main class="main-content">
-      <div class="page-header">
+    <main class="main">
+      <header class="topbar">
+        <div class="topbar-header">
+          <span class="topbar-subtitle">WALLETWISE AI</span>
+          <h1 class="topbar-title" id="pageTitle">Dashboard</h1>
+        </div>
+
+        <div class="topbar-actions">
+          <button class="btn" id="importBtn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            Import CSV
+          </button>
+          <button class="btn primary" id="addEntryBtn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            + Add entry
+          </button>
+        </div>
+      </header>
+
+      <div class="content">
+        <div id="pageRoot"></div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Floating AI Assistant -->
+  <button class="ai-fab" id="aiChatFab" title="WalletWise AI Assistant">
+    <i class="fas fa-robot" style="font-size:20px;"></i>
+  </button>
+
+  <div class="ai-drawer" id="aiChatDrawer">
+    <div class="ai-drawer-header">
+      <h4><i class="fas fa-brain"></i> WalletWise AI Assistant</h4>
+      <button class="close-btn" id="closeChatBtn" style="background:transparent;color:white;font-size:20px;">×</button>
+    </div>
+    <div class="ai-drawer-body" id="chatBody">
+      <div class="chat-bubble bot">Hello! I am your WalletWise AI financial assistant. Ask me anything about your spending, budget health, or recurring commitments!</div>
+    </div>
+    <form class="ai-drawer-footer" id="chatForm">
+      <input id="chatInput" placeholder="Ask AI about your spending..." required />
+      <button class="btn primary" type="submit"><i class="fas fa-paper-plane"></i></button>
+    </form>
+  </div>
+
+  <!-- Modal Container -->
+  <div class="modal-backdrop" id="modalRoot"></div>
+
+  <!-- Centralized API Helper -->
+  <script src="js/api.js"></script>
+
+  <script>
+    // Navigation pages configuration
+    const pagesConfig = [
+      { id: 'dashboard', label: 'Dashboard', icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>' },
+      { id: 'transactions', label: 'Transactions', icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>' },
+      { id: 'recurring', label: 'Recurring', icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>' },
+      { id: 'subscriptions', label: 'Subscriptions', icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>' },
+      { id: 'budgets', label: 'Budgets', icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>' },
+      { id: 'goals', label: 'Goals', icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>' },
+      { id: 'rules', label: 'Rules & Strategy', icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>' },
+      { id: 'insights', label: 'AI Insights', icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>' },
+      { id: 'settings', label: 'Settings', icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06A1.65 1.65 0 0 0 15 19.4a1.65 1.65 0 0 0-1 .6 1.65 1.65 0 0 0-.2 1.16L13.6 22a2 2 0 1 1-4 0l-.1-.8a1.65 1.65 0 0 0-.2-1.16 1.65 1.65 0 0 0-1-.6 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-.6-1 1.65 1.65 0 0 0-1.16-.2L2 13.6a2 2 0 1 1 0-4l.8-.1a1.65 1.65 0 0 0 1.16-.2 1.65 1.65 0 0 0 .6-1A1.65 1.65 0 0 0 4.6 7.15l-.06-.06A2 2 0 1 1 7.37 4.26l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-.6 1.65 1.65 0 0 0 .2-1.16L10.4 2a2 2 0 1 1 4 0l.1.8a1.65 1.65 0 0 0 .2 1.16 1.65 1.65 0 0 0 1 .6 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9c.27.27.64.42 1 .45l.8.1a2 2 0 1 1 0 4l-.8.1a1.65 1.65 0 0 0-1 .45z"/></svg>' }
+    ];
+
+    // Read initial tab from URL parameter
+    const initialUrlParams = new URLSearchParams(window.location.search);
+    const requestedTab = initialUrlParams.get('tab');
+    const validTab = pagesConfig.some(p => p.id === requestedTab) ? requestedTab : 'dashboard';
+
+    // Global App State
+    const appState = {
+      activeTab: validTab,
+      dashboardSummary: null,
+      transactions: [],
+      categories: [],
+      budgets: [],
+      goals: [],
+      activeRule: null,
+      insights: null,
+      recurring: []
+    };
+
+    function formatMoney(value) {
+      const amount = Number(value) || 0;
+      return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 2 }).format(amount);
+    }
+
+    function formatSignedMoney(value, type = 'Expense') {
+      const amount = Number(value) || 0;
+      const sign = type === 'Income' ? '+' : '-';
+      return `${sign}${formatMoney(amount)}`;
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    // Load state from real user-isolated REST APIs
+    async function loadState() {
+      try {
+        const [summary, txs, cats, bStatus, rList, gList, ruleActive, insightsOverview] = await Promise.all([
+          api.get('/dashboard/summary').catch(() => null),
+          api.get('/transactions').catch(() => []),
+          api.get('/categories').catch(() => []),
+          api.get('/budgets/status').catch(() => []),
+          api.get('/insights/recurring').catch(() => []),
+          api.get('/goals').catch(() => []),
+          api.get('/rules/active').catch(() => null),
+          api.get('/insights/overview').catch(() => null)
+        ]);
+
+        appState.dashboardSummary = summary;
+        appState.transactions = Array.isArray(txs) ? txs : (txs?.items || []);
+        appState.categories = cats || [];
+        appState.budgets = bStatus || [];
+        appState.recurring = rList || [];
+        appState.goals = gList || [];
+        appState.activeRule = ruleActive;
+        appState.insights = insightsOverview;
+      } catch (err) {
+        console.error('Failed to load user state from API:', err);
+      }
+
+      renderNavigation();
+      renderCurrentPage();
+    }
+
+    function renderNavigation() {
+      const navContainer = document.getElementById('sidebarNav');
+      navContainer.innerHTML = '';
+
+      pagesConfig.forEach(item => {
+        const btn = document.createElement('button');
+        btn.className = `nav-btn ${item.id === appState.activeTab ? 'active' : ''}`;
+        btn.innerHTML = `<span class="nav-icon">${item.icon}</span>${item.label}`;
+        btn.addEventListener('click', () => {
+          appState.activeTab = item.id;
+          document.getElementById('pageTitle').textContent = item.label;
+          renderNavigation();
+          renderCurrentPage();
+        });
+        navContainer.appendChild(btn);
+      });
+    }
+
+    function renderCurrentPage() {
+      const root = document.getElementById('pageRoot');
+      const activeConf = pagesConfig.find(p => p.id === appState.activeTab);
+      if (activeConf) {
+        document.getElementById('pageTitle').textContent = activeConf.label;
+      }
+
+      let html = '';
+      switch (appState.activeTab) {
+        case 'dashboard': html = renderDashboardPage(); break;
+        case 'transactions': html = renderTransactionsPage(); break;
+        case 'recurring': html = renderRecurringPage(); break;
+        case 'subscriptions': html = renderSubscriptionsPage(); break;
+        case 'budgets': html = renderBudgetsPage(); break;
+        case 'goals': html = renderGoalsPage(); break;
+        case 'rules': html = renderRulesPage(); break;
+        case 'insights': html = renderInsightsPage(); break;
+        case 'settings': html = renderSettingsPage(); break;
+        default: html = renderDashboardPage();
+      }
+
+      root.innerHTML = html;
+      bindPageEventListeners();
+    }
+
+    // 1. DASHBOARD PAGE
+    function renderDashboardPage() {
+      const summary = appState.dashboardSummary || {};
+      const income = summary.totalIncome || 0;
+      const expenses = summary.totalExpenses || 0;
+      const balance = income - expenses;
+      const savingsRate = income > 0 ? (((income - expenses) / income) * 100).toFixed(1) : '0.0';
+      const recent = summary.recentTransactions || appState.transactions.slice(0, 5);
+      const catExpenses = summary.categoryExpenses || [];
+
+      return `
         <div>
-          <h1 class="page-title">Financial Dashboard</h1>
-          <p class="page-subtitle">Real-time overview of your monthly cash flow, budget rules &amp; AI insights.</p>
+          <!-- Quick Expense Bar -->
+          <div class="panel" style="margin-bottom: 24px; padding: 18px 24px; background: #ffffff;">
+            <form id="quickEntryForm" style="display: flex; gap: 12px; align-items: center;">
+              <div style="font-weight: 700; font-size: 14px; white-space: nowrap; color: var(--primary); display: flex; align-items: center; gap: 6px;">
+                ⚡ Quick Entry:
+              </div>
+              <input id="quickEntryInput" placeholder="e.g. Lunch 250, Uber 450, Grocery 1200" style="flex: 1;" required />
+              <button class="btn primary" type="submit">Add Expense</button>
+            </form>
+          </div>
+
+          <div class="summary-grid">
+            <div class="panel summary-card">
+              <h3>Net Balance</h3>
+              <div class="summary-value ${balance >= 0 ? 'money-pos' : 'money-neg'}">${formatMoney(balance)}</div>
+            </div>
+            <div class="panel summary-card">
+              <h3>Total Income</h3>
+              <div class="summary-value money-pos">${formatMoney(income)}</div>
+            </div>
+            <div class="panel summary-card">
+              <h3>Total Expenses</h3>
+              <div class="summary-value money-neg">${formatMoney(expenses)}</div>
+            </div>
+            <div class="panel summary-card">
+              <h3>Savings Rate</h3>
+              <div class="summary-value" style="color:var(--primary);">${savingsRate}%</div>
+            </div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1.5fr 1fr;gap:20px;margin-bottom:24px;">
+            <!-- Category Breakdown -->
+            <div class="panel">
+              <div class="panel-header">
+                <div class="panel-title-group">
+                  <h2>Spending Breakdown</h2>
+                  <p>Category distribution from your actual transactions</p>
+                </div>
+              </div>
+              ${catExpenses.length ? `
+                <div style="display:flex;flex-direction:column;gap:12px;">
+                  ${catExpenses.map(c => `
+                    <div>
+                      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;font-size:14px;">
+                        <span style="font-weight:600;">${escapeHtml(c.categoryName)}</span>
+                        <span style="font-weight:700;">${formatMoney(c.amount)} (${c.percentage}%)</span>
+                      </div>
+                      <div class="budget-progress-bg">
+                        <div class="budget-progress-bar" style="width:${Math.min(c.percentage, 100)}%;background:${c.colorCode || 'var(--primary)'};"></div>
+                      </div>
+                    </div>
+                  `).join('')}
+                </div>
+              ` : '<div class="empty-state">No expense categories recorded yet. Add your first transaction above!</div>'}
+            </div>
+
+            <!-- Strategy & Rule Health Widget -->
+            <div class="panel">
+              <div class="panel-header">
+                <div class="panel-title-group">
+                  <h2>50 / 30 / 20 Strategy</h2>
+                  <p>Active rule evaluation</p>
+                </div>
+              </div>
+              ${renderRuleHealthWidget()}
+            </div>
+          </div>
+
+          <!-- Recent Transactions -->
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title-group">
+                <h2>Recent Transactions</h2>
+              </div>
+              <button class="btn" onclick="appState.activeTab='transactions';renderNavigation();renderCurrentPage();">View All</button>
+            </div>
+            ${recent.length ? `
+              <div class="table-container">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Date & Description</th>
+                      <th>Category</th>
+                      <th>Payment Method</th>
+                      <th>Amount</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${recent.map(t => `
+                      <tr>
+                        <td>
+                          <strong>${escapeHtml(t.description || 'Transaction')}</strong>
+                          <br><span style="font-size:12px;color:var(--text-muted);">${new Date(t.transactionDate).toLocaleDateString()}</span>
+                        </td>
+                        <td><span class="tag-pill" style="background:#f1f5f9;color:#334155;padding:4px 8px;border-radius:6px;font-size:12px;">${escapeHtml(t.categoryName || 'General')}</span></td>
+                        <td>${escapeHtml(t.paymentMethod || 'UPI')}</td>
+                        <td class="${t.type === 'Income' ? 'money-pos' : 'money-neg'}">${formatSignedMoney(t.amount, t.type)}</td>
+                      </tr>
+                    `).join('')}
+                  </tbody>
+                </table>
+              </div>
+            ` : '<div class="empty-state">No transactions recorded yet. Click "+ Add entry" to record your first transaction!</div>'}
+          </div>
         </div>
+      `;
+    }
+
+    function renderRuleHealthWidget() {
+      const active = appState.activeRule;
+      if (!active || !active.buckets) {
+        return `<div class="empty-state">Rule target: 50% Needs, 30% Wants, 20% Savings. Add transactions to see breakdown.</div>`;
+      }
+
+      return `
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          ${active.buckets.map(b => `
+            <div>
+              <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px;">
+                <strong>${escapeHtml(b.bucketName)} (${b.targetPercentage}%)</strong>
+                <span class="${b.status.includes('Over') ? 'money-neg' : 'money-pos'}">${escapeHtml(b.status)}</span>
+              </div>
+              <div class="budget-progress-bg">
+                <div class="budget-progress-bar" style="width:${Math.min(100, Math.round((b.actualSpent / (b.targetAmount || 1)) * 100))}%;background:${b.status.includes('Over') ? 'var(--danger)' : 'var(--green)'};"></div>
+              </div>
+              <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-muted);margin-top:2px;">
+                <span>Target: ${formatMoney(b.targetAmount)}</span>
+                <span>Actual: ${formatMoney(b.actualSpent)}</span>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    // 2. TRANSACTIONS PAGE
+    function renderTransactionsPage() {
+      const txs = appState.transactions || [];
+      const cats = appState.categories || [];
+
+      return `
         <div>
-          <a href="transactions.html" class="btn btn-primary"><i class="fas fa-plus"></i> Add Transaction</a>
-        </div>
-      </div>
-
-      <!-- Quick Expense Entry Bar (Feature 2B) -->
-      <div class="quick-entry-card">
-        <div class="quick-entry-label"><i class="fas fa-bolt"></i> Quick Entry:</div>
-        <form id="dashQuickForm" class="quick-entry-form">
-          <input type="text" id="dashQuickInput" class="quick-input" placeholder="Type naturally, e.g. 'Suji 250' or 'Uber 180' or 'Amazon 1200'..." required>
-          <button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane"></i> Add</button>
-        </form>
-      </div>
-
-      <!-- KPI Grid -->
-      <div class="kpi-grid">
-        <div class="kpi-card">
-          <div class="kpi-header">
-            <span class="kpi-title">Total Income</span>
-            <div class="kpi-icon-wrap icon-income"><i class="fas fa-arrow-down"></i></div>
-          </div>
-          <div id="totalIncome" class="kpi-value">₹0.00</div>
-          <div class="kpi-subtext">Current month earnings</div>
-        </div>
-
-        <div class="kpi-card">
-          <div class="kpi-header">
-            <span class="kpi-title">Total Expenses</span>
-            <div class="kpi-icon-wrap icon-expense"><i class="fas fa-arrow-up"></i></div>
-          </div>
-          <div id="totalExpenses" class="kpi-value">₹0.00</div>
-          <div class="kpi-subtext">Current month spend</div>
-        </div>
-
-        <div class="kpi-card">
-          <div class="kpi-header">
-            <span class="kpi-title">Net Savings</span>
-            <div class="kpi-icon-wrap icon-savings"><i class="fas fa-piggy-bank"></i></div>
-          </div>
-          <div id="totalSavings" class="kpi-value">₹0.00</div>
-          <div class="kpi-subtext">Income minus expenses</div>
-        </div>
-
-        <div class="kpi-card">
-          <div class="kpi-header">
-            <span class="kpi-title">Savings Rate</span>
-            <div class="kpi-icon-wrap icon-rate"><i class="fas fa-percentage"></i></div>
-          </div>
-          <div id="savingsPercentage" class="kpi-value">0%</div>
-          <div class="kpi-subtext">Target: at least 20%</div>
-        </div>
-      </div>
-
-      <!-- 50/30/20 Financial Rule Banner -->
-      <div class="rule-card">
-        <div class="rule-header">
-          <div class="rule-title"><i class="fas fa-balance-scale"></i> 50/30/20 Financial Rule Status</div>
-          <span id="ruleStatusBadge" class="rule-badge">Evaluating...</span>
-        </div>
-        <p id="ruleRecommendation" style="font-size: 0.9rem; color: #cbd5e1;">Tracking essential needs, discretionary wants, and savings against income.</p>
-        <div class="rule-bars">
-          <div class="rule-item">
-            <div class="rule-item-header">
-              <span>Needs (Max 50%)</span>
-              <strong id="pctNeeds">0%</strong>
-            </div>
-            <div class="rule-progress">
-              <div id="barNeeds" class="rule-progress-bar bar-needs" style="width: 0%;"></div>
-            </div>
-          </div>
-          <div class="rule-item">
-            <div class="rule-item-header">
-              <span>Wants (Max 30%)</span>
-              <strong id="pctWants">0%</strong>
-            </div>
-            <div class="rule-progress">
-              <div id="barWants" class="rule-progress-bar bar-wants" style="width: 0%;"></div>
-            </div>
-          </div>
-          <div class="rule-item">
-            <div class="rule-item-header">
-              <span>Savings (Min 20%)</span>
-              <strong id="pctSavings">0%</strong>
-            </div>
-            <div class="rule-progress">
-              <div id="barSavings" class="rule-progress-bar bar-savings" style="width: 0%;"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Dashboard 2-Column Grid -->
-      <div class="dashboard-grid">
-        <!-- Left: Trends & Recent Transactions -->
-        <div style="display: flex; flex-direction: column; gap: 24px;">
-          <div class="card">
-            <div class="card-header">
-              <h2 class="card-title"><i class="fas fa-chart-column" style="color: var(--primary); margin-right: 8px;"></i> 6-Month Spending Trends</h2>
-            </div>
-            <div id="monthlyTrendsContainer">
-              <!-- Rendered via JS -->
+          <div class="toolbar">
+            <div class="filters-group" style="width: 100%;">
+              <div class="search-input-wrap">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <input id="txSearchInput" placeholder="Search transactions..." />
+              </div>
+              <select id="txCatFilter">
+                <option value="">All Categories</option>
+                ${cats.map(c => `<option value="${c.categoryId}">${escapeHtml(c.name)}</option>`).join('')}
+              </select>
+              <select id="txTypeFilter">
+                <option value="">All Types</option>
+                <option value="Expense">Expense</option>
+                <option value="Income">Income</option>
+              </select>
             </div>
           </div>
 
-          <div class="card">
-            <div class="card-header">
-              <h2 class="card-title"><i class="fas fa-receipt" style="color: var(--primary); margin-right: 8px;"></i> Recent Transactions</h2>
-              <a href="transactions.html" style="font-size: 0.85rem; color: var(--primary); text-decoration: none; font-weight: 600;">View All &rarr;</a>
-            </div>
-            <div class="table-container">
+          <div class="panel" style="padding:0;overflow:hidden;">
+            <div class="table-container" style="border:none;">
               <table>
                 <thead>
                   <tr>
-                    <th>Description</th>
+                    <th>Date & Description</th>
                     <th>Category</th>
-                    <th>Method</th>
-                    <th>Date</th>
+                    <th>Payment Method</th>
+                    <th>Type</th>
                     <th>Amount</th>
+                    <th>Actions</th>
                   </tr>
                 </thead>
-                <tbody id="recentTransactionsBody">
-                  <!-- Rendered via JS -->
+                <tbody id="txTableBody">
+                  ${txs.length ? txs.map(t => `
+                    <tr>
+                      <td>
+                        <strong>${escapeHtml(t.description || 'Transaction')}</strong>
+                        <br><span style="font-size:12px;color:var(--text-muted);">${new Date(t.transactionDate).toLocaleDateString()}</span>
+                      </td>
+                      <td><span class="tag-pill" style="background:#f1f5f9;color:#334155;padding:4px 8px;border-radius:6px;font-size:12px;">${escapeHtml(t.categoryName || 'General')}</span></td>
+                      <td>${escapeHtml(t.paymentMethod || 'UPI')}</td>
+                      <td><span style="font-weight:600;color:${t.type === 'Income' ? 'var(--green)' : 'var(--text-main)'}">${t.type}</span></td>
+                      <td class="${t.type === 'Income' ? 'money-pos' : 'money-neg'}">${formatSignedMoney(t.amount, t.type)}</td>
+                      <td>
+                        <button class="btn danger" style="padding:4px 10px;font-size:12px;" data-delete-tx="${t.transactionId}">Delete</button>
+                      </td>
+                    </tr>
+                  `).join('') : '<tr><td colspan="6"><div class="empty-state">No transactions match your query.</div></td></tr>'}
                 </tbody>
               </table>
             </div>
           </div>
         </div>
+      `;
+    }
 
-        <!-- Right: Category Expenses Breakdown -->
-        <div class="card">
-          <div class="card-header">
-            <h2 class="card-title"><i class="fas fa-pie-chart" style="color: var(--primary); margin-right: 8px;"></i> Category Expenses</h2>
+    // 3. RECURRING PAGE
+    function renderRecurringPage() {
+      const rec = appState.recurring || [];
+      return `
+        <div>
+          <div class="panel-header" style="margin-bottom:16px;">
+            <div class="panel-title-group">
+              <h2>Recurring Payments & Subscriptions</h2>
+              <p>Detected automatically from spending frequency in your records</p>
+            </div>
           </div>
-          <div id="categoryBreakdownList" class="category-list">
-            <!-- Rendered via JS -->
+
+          <div class="panel">
+            ${rec.length ? `
+              <div style="display:flex;flex-direction:column;gap:12px;">
+                ${rec.map(r => `
+                  <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border:1px solid var(--stroke);border-radius:var(--radius-md);background:#ffffff;">
+                    <div>
+                      <strong>${escapeHtml(r.merchantName || r.description)}</strong>
+                      <br><span style="font-size:12px;color:var(--text-muted);">${escapeHtml(r.categoryName || 'Expense')} • Frequency: ${escapeHtml(r.frequency)}</span>
+                    </div>
+                    <div style="text-align:right;">
+                      <strong style="font-size:18px;">${formatMoney(r.averageAmount || r.amount)}</strong>
+                      <br><span style="font-size:12px;color:var(--text-muted);">Every ${escapeHtml(r.frequency)}</span>
+                    </div>
+                  </div>
+                `).join('')}
+              </div>
+            ` : '<div class="empty-state">No recurring expenses detected yet. Add more transactions over time to identify patterns!</div>'}
           </div>
         </div>
-      </div>
-    </main>
-  </div>
+      `;
+    }
 
-  <!-- AI Floating Chatbot Widget (Feature 8) -->
-  <div id="aiChatFab" class="ai-fab" title="Ask AI Financial Insights">
-    <i class="fas fa-robot"></i>
-  </div>
+    // 4. SUBSCRIPTIONS PAGE
+    function renderSubscriptionsPage() {
+      return renderRecurringPage();
+    }
 
-  <div id="aiChatDrawer" class="ai-chat-drawer">
-    <div class="chat-header">
-      <div class="chat-title"><i class="fas fa-brain" style="color: #38bdf8;"></i> AI Financial Insights</div>
-      <button id="closeChatBtn" style="background: none; border: none; color: white; cursor: pointer; font-size: 1.1rem;"><i class="fas fa-times"></i></button>
-    </div>
-    <div id="chatBody" class="chat-body">
-      <div class="chat-bubble bot">
-        Hello! I'm your Smart Expense AI assistant. I analyze your actual database records. Ask me anything or tap below:
-      </div>
-      <!-- Quick Prompts -->
-      <div style="display: flex; flex-direction: column; gap: 6px; margin: 4px 0;">
-        <button class="btn btn-secondary btn-sm" style="text-align: left; font-size: 0.75rem; justify-content: flex-start;" onclick="sendQuickPrompt('How much did I spend this month?')">💡 How much did I spend this month?</button>
-        <button class="btn btn-secondary btn-sm" style="text-align: left; font-size: 0.75rem; justify-content: flex-start;" onclick="sendQuickPrompt('How much did I spend on food?')">🍔 How much did I spend on food?</button>
-        <button class="btn btn-secondary btn-sm" style="text-align: left; font-size: 0.75rem; justify-content: flex-start;" onclick="sendQuickPrompt('Where is most of my money going?')">📊 Where is most of my money going?</button>
-        <button class="btn btn-secondary btn-sm" style="text-align: left; font-size: 0.75rem; justify-content: flex-start;" onclick="sendQuickPrompt('Am I following the 50/30/20 rule?')">⚖️ Am I following the 50/30/20 rule?</button>
-      </div>
-    </div>
-    <form id="chatForm" class="chat-footer">
-      <input type="text" id="chatInput" class="form-control" placeholder="Ask about your expenses..." required style="padding: 8px 12px; font-size: 0.85rem;">
-      <button type="submit" class="btn btn-primary" style="padding: 8px 12px;"><i class="fas fa-paper-plane"></i></button>
-    </form>
-  </div>
+    // 5. BUDGETS PAGE
+    function renderBudgetsPage() {
+      const budgets = appState.budgets || [];
 
-  <script src="js/api.js"></script>
-  <script src="js/dashboard.js"></script>
-  <script src="js/ai-chatbot.js"></script>
+      return `
+        <div>
+          <div class="panel-header" style="margin-bottom:16px;">
+            <div class="panel-title-group">
+              <h2>Category Budgets</h2>
+              <p>Monthly spending guardrails with live calculations</p>
+            </div>
+            <button class="btn primary" id="openAddBudgetModalBtn">+ Create Budget</button>
+          </div>
+
+          <div class="budgets-grid">
+            ${budgets.length ? budgets.map(b => `
+              <div class="budget-card">
+                <div class="budget-card-header">
+                  <div class="budget-cat-info">
+                    <div class="budget-cat-icon"><i class="fas fa-chart-pie"></i></div>
+                    <div>
+                      <div class="budget-cat-name">${escapeHtml(b.categoryName)}</div>
+                      <div style="font-size:12px;color:var(--text-muted);">Monthly Limit</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="budget-amounts">
+                  <span class="budget-spent">${formatMoney(b.actualSpent)}</span>
+                  <span class="budget-limit">of ${formatMoney(b.monthlyLimit)}</span>
+                </div>
+
+                <div class="budget-progress-bg">
+                  <div class="budget-progress-bar" style="width:${Math.min(100, Math.round(b.percentageUsed || 0))}%;background:${b.isExceeded ? 'var(--danger)' : 'var(--primary)'};"></div>
+                </div>
+
+                <div class="budget-meta">
+                  <span>${formatMoney(b.remainingAmount)} ${b.isExceeded ? 'over limit!' : 'remaining'}</span>
+                  <span style="color:${b.isExceeded ? 'var(--danger)' : 'inherit'};">${b.percentageUsed}%</span>
+                </div>
+              </div>
+            `).join('') : '<div class="empty-state full">No category budgets set yet. Click + Create Budget to set one!</div>'}
+          </div>
+        </div>
+      `;
+    }
+
+    // 6. SAVINGS GOALS PAGE
+    function renderGoalsPage() {
+      const goals = appState.goals || [];
+
+      return `
+        <div>
+          <div class="panel-header" style="margin-bottom:16px;">
+            <div class="panel-title-group">
+              <h2>Savings Goals</h2>
+              <p>Track targets and progress towards your financial objectives</p>
+            </div>
+            <button class="btn primary" id="openAddGoalModalBtn">+ Create Goal</button>
+          </div>
+
+          <div style="display:grid;grid-template-columns:repeat(2, minmax(0, 1fr));gap:18px;">
+            ${goals.length ? goals.map(g => {
+              const pct = g.targetAmount > 0 ? Math.min(100, Math.round((g.currentAmount / g.targetAmount) * 100)) : 0;
+              return `
+                <div class="panel">
+                  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+                    <div>
+                      <h3 style="font-size:18px;font-weight:700;">${escapeHtml(g.title)}</h3>
+                      <span style="font-size:12px;color:var(--text-muted);">${g.targetDate ? `Target: ${new Date(g.targetDate).toLocaleDateString()}` : 'Savings Target'}</span>
+                    </div>
+                    <button class="btn danger" style="padding:4px 10px;font-size:12px;" data-delete-goal="${g.goalId}">Delete</button>
+                  </div>
+                  <div style="font-size:24px;font-weight:800;margin-bottom:10px;">${formatMoney(g.currentAmount)} <span style="font-size:14px;color:var(--text-muted);font-weight:500;">/ ${formatMoney(g.targetAmount)}</span></div>
+                  <div class="budget-progress-bg" style="margin-bottom:8px;">
+                    <div class="budget-progress-bar" style="width:${pct}%;background:var(--green);"></div>
+                  </div>
+                  <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text-muted);font-weight:600;">
+                    <span>${formatMoney(Math.max(0, g.targetAmount - g.currentAmount))} remaining</span>
+                    <span>${pct}% completed</span>
+                  </div>
+                </div>
+              `;
+            }).join('') : '<div class="empty-state full">No savings goals created yet. Click + Create Goal to get started!</div>'}
+          </div>
+        </div>
+      `;
+    }
+
+    // 7. FINANCIAL RULES PAGE
+    function renderRulesPage() {
+      return `
+        <div>
+          <div class="panel-header" style="margin-bottom:16px;">
+            <div class="panel-title-group">
+              <h2>Financial Strategy & Rules</h2>
+              <p>Allocate income according to financial principles</p>
+            </div>
+          </div>
+
+          <div class="panel" style="margin-bottom:24px;">
+            <h3 style="font-size:18px;font-weight:700;margin-bottom:12px;">50 / 30 / 20 Rule Strategy</h3>
+            <p style="font-size:14px;color:var(--text-muted);margin-bottom:16px;">Splits income into 50% Needs, 30% Wants, and 20% Savings & Investments.</p>
+            ${renderRuleHealthWidget()}
+          </div>
+        </div>
+      `;
+    }
+
+    // 8. AI INSIGHTS PAGE
+    function renderInsightsPage() {
+      const ins = appState.insights || {};
+      const anomalies = ins.anomalies || [];
+      const predictions = ins.predictions || {};
+
+      return `
+        <div>
+          <div class="panel-header" style="margin-bottom:16px;">
+            <div class="panel-title-group">
+              <h2>AI Financial Insights</h2>
+              <p>Automated analytics computed strictly from your user records</p>
+            </div>
+          </div>
+
+          <div class="summary-grid" style="grid-template-columns:repeat(2, minmax(0, 1fr));">
+            <div class="panel summary-card">
+              <h3>Health Score</h3>
+              <div class="summary-value" style="color:var(--primary);">${ins.healthScore != null ? (typeof ins.healthScore === 'object' ? (ins.healthScore.score || ins.healthScore.healthScore || 85) : ins.healthScore) : 85} / 100</div>
+              <div style="font-size:12px;color:var(--text-muted);margin-top:4px;">${ins.healthScore?.summary || 'Disciplined budget health'}</div>
+            </div>
+            <div class="panel summary-card">
+              <h3>Next Month Projected Spend</h3>
+              <div class="summary-value money-neg">${formatMoney(predictions.predictedTotalExpense || 0)}</div>
+              <div style="font-size:12px;color:var(--text-muted);margin-top:4px;">Based on recent trend velocity</div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <h3 style="font-size:18px;font-weight:700;margin-bottom:14px;">Spending Anomalies Detected</h3>
+            ${anomalies.length ? `
+              <div style="display:flex;flex-direction:column;gap:10px;">
+                ${anomalies.map(a => `
+                  <div style="padding:14px 18px;border-left:4px solid var(--orange);background:#fffbeb;border-radius:8px;">
+                    <strong style="color:var(--text-main);">${escapeHtml(a.categoryName || 'Notice')}</strong>: ${escapeHtml(a.message || a.reason)}
+                  </div>
+                `).join('')}
+              </div>
+            ` : '<div class="empty-state">No abnormal spending spikes detected in your account.</div>'}
+          </div>
+        </div>
+      `;
+    }
+
+    // 9. SETTINGS PAGE
+    function renderSettingsPage() {
+      return `
+        <div>
+          <div class="panel-header" style="margin-bottom:16px;">
+            <div class="panel-title-group">
+              <h2>Account Settings</h2>
+              <p>Manage your active authenticated session</p>
+            </div>
+          </div>
+
+          <div class="panel" style="max-width:560px;">
+            <h3 style="font-size:18px;font-weight:700;margin-bottom:16px;">Authentication Status</h3>
+            <p style="font-size:14px;color:var(--text-muted);margin-bottom:20px;">Your session is authenticated via JWT Bearer tokens with complete user data isolation.</p>
+            <button class="btn danger" onclick="logout();"><i class="fas fa-sign-out-alt"></i> Sign Out</button>
+          </div>
+        </div>
+      `;
+    }
+
+    // Modal Helpers
+    function openModal(html) {
+      const root = document.getElementById('modalRoot');
+      root.innerHTML = html;
+      root.classList.add('open');
+      root.querySelectorAll('[data-close-modal]').forEach(b => b.addEventListener('click', closeModal));
+    }
+    function closeModal() {
+      const root = document.getElementById('modalRoot');
+      root.classList.remove('open');
+      root.innerHTML = '';
+    }
+
+    // Bind event listeners across dynamic pages
+    function bindPageEventListeners() {
+      // Quick Entry
+      const quickForm = document.getElementById('quickEntryForm');
+      if (quickForm) {
+        quickForm.onsubmit = async (e) => {
+          e.preventDefault();
+          const input = document.getElementById('quickEntryInput').value.trim();
+          if (!input) return;
+          try {
+            await api.post('/transactions/quick', { input });
+            showToast('Quick expense added successfully!', 'success');
+            await loadState();
+          } catch (err) {
+            showToast(err.message || 'Failed to add quick entry.', 'error');
+          }
+        };
+      }
+
+      // Add Entry Button (Modal)
+      const addBtn = document.getElementById('addEntryBtn');
+      if (addBtn) {
+        addBtn.onclick = () => {
+          const cats = appState.categories || [];
+          openModal(`
+            <div class="modal">
+              <div class="modal-header">
+                <h3>Add New Transaction</h3>
+                <button class="close-btn" data-close-modal>×</button>
+              </div>
+              <form id="modalTxForm">
+                <div class="form-grid">
+                  <div class="input-group">
+                    <label>Type</label>
+                    <select id="mType">
+                      <option value="Expense">Expense</option>
+                      <option value="Income">Income</option>
+                    </select>
+                  </div>
+                  <div class="input-group">
+                    <label>Amount (₹)</label>
+                    <input id="mAmount" type="number" step="0.01" required placeholder="0.00" />
+                  </div>
+                  <div class="input-group full">
+                    <label>Description / Merchant</label>
+                    <input id="mDesc" required placeholder="e.g. Grocery, Lunch, Electric Bill" />
+                  </div>
+                  <div class="input-group">
+                    <label>Category</label>
+                    <select id="mCat">
+                      ${cats.map(c => `<option value="${c.categoryId}">${escapeHtml(c.name)}</option>`).join('')}
+                    </select>
+                  </div>
+                  <div class="input-group">
+                    <label>Payment Method</label>
+                    <select id="mPay">
+                      <option value="UPI">UPI</option>
+                      <option value="Credit Card">Credit Card</option>
+                      <option value="Debit Card">Debit Card</option>
+                      <option value="Net Banking">Net Banking</option>
+                      <option value="Cash">Cash</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="modal-actions">
+                  <button class="btn" type="button" data-close-modal>Cancel</button>
+                  <button class="btn primary" type="submit">Save Transaction</button>
+                </div>
+              </form>
+            </div>
+          `);
+
+          document.getElementById('modalTxForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const payload = {
+              amount: parseFloat(document.getElementById('mAmount').value),
+              type: document.getElementById('mType').value,
+              description: document.getElementById('mDesc').value,
+              categoryId: parseInt(document.getElementById('mCat').value),
+              paymentMethod: document.getElementById('mPay').value,
+              transactionDate: new Date().toISOString()
+            };
+            try {
+              await api.post('/transactions', payload);
+              closeModal();
+              showToast('Transaction saved!', 'success');
+              await loadState();
+            } catch (err) {
+              showToast(err.message || 'Failed to save transaction.', 'error');
+            }
+          };
+        };
+      }
+
+      // Delete Transaction
+      document.querySelectorAll('[data-delete-tx]').forEach(btn => {
+        btn.onclick = async () => {
+          const id = btn.getAttribute('data-delete-tx');
+          if (!confirm('Delete this transaction record?')) return;
+          try {
+            await api.delete(`/transactions/${id}`);
+            showToast('Transaction deleted.', 'success');
+            await loadState();
+          } catch (err) {
+            showToast(err.message || 'Failed to delete transaction.', 'error');
+          }
+        };
+      });
+
+      // Add Budget Modal
+      const addBudgetBtn = document.getElementById('openAddBudgetModalBtn');
+      if (addBudgetBtn) {
+        addBudgetBtn.onclick = () => {
+          const cats = appState.categories || [];
+          openModal(`
+            <div class="modal">
+              <div class="modal-header">
+                <h3>Set Category Budget</h3>
+                <button class="close-btn" data-close-modal>×</button>
+              </div>
+              <form id="modalBudgetForm">
+                <div class="form-grid">
+                  <div class="input-group full">
+                    <label>Category</label>
+                    <select id="bCat">
+                      ${cats.map(c => `<option value="${c.categoryId}">${escapeHtml(c.name)}</option>`).join('')}
+                    </select>
+                  </div>
+                  <div class="input-group full">
+                    <label>Monthly Limit (₹)</label>
+                    <input id="bLimit" type="number" step="1" required placeholder="5000" />
+                  </div>
+                </div>
+                <div class="modal-actions">
+                  <button class="btn" type="button" data-close-modal>Cancel</button>
+                  <button class="btn primary" type="submit">Set Budget</button>
+                </div>
+              </form>
+            </div>
+          `);
+
+          document.getElementById('modalBudgetForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const payload = {
+              categoryId: parseInt(document.getElementById('bCat').value),
+              monthlyLimit: parseFloat(document.getElementById('bLimit').value),
+              month: new Date().getMonth() + 1,
+              year: new Date().getFullYear()
+            };
+            try {
+              await api.post('/budgets', payload);
+              closeModal();
+              showToast('Budget configured!', 'success');
+              await loadState();
+            } catch (err) {
+              showToast(err.message || 'Failed to configure budget.', 'error');
+            }
+          };
+        };
+      }
+
+      // Add Goal Modal
+      const addGoalBtn = document.getElementById('openAddGoalModalBtn');
+      if (addGoalBtn) {
+        addGoalBtn.onclick = () => {
+          openModal(`
+            <div class="modal">
+              <div class="modal-header">
+                <h3>Create Savings Goal</h3>
+                <button class="close-btn" data-close-modal>×</button>
+              </div>
+              <form id="modalGoalForm">
+                <div class="form-grid">
+                  <div class="input-group full">
+                    <label>Goal Title</label>
+                    <input id="gTitle" required placeholder="e.g. Emergency Fund, Laptop" />
+                  </div>
+                  <div class="input-group">
+                    <label>Target Amount (₹)</label>
+                    <input id="gTarget" type="number" step="1" required placeholder="50000" />
+                  </div>
+                  <div class="input-group">
+                    <label>Current Saved (₹)</label>
+                    <input id="gCurrent" type="number" step="1" value="0" />
+                  </div>
+                </div>
+                <div class="modal-actions">
+                  <button class="btn" type="button" data-close-modal>Cancel</button>
+                  <button class="btn primary" type="submit">Create Goal</button>
+                </div>
+              </form>
+            </div>
+          `);
+
+          document.getElementById('modalGoalForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const payload = {
+              title: document.getElementById('gTitle').value,
+              targetAmount: parseFloat(document.getElementById('gTarget').value),
+              currentAmount: parseFloat(document.getElementById('gCurrent').value || '0')
+            };
+            try {
+              await api.post('/goals', payload);
+              closeModal();
+              showToast('Savings Goal created!', 'success');
+              await loadState();
+            } catch (err) {
+              showToast(err.message || 'Failed to create goal.', 'error');
+            }
+          };
+        };
+      }
+
+      // Delete Goal
+      document.querySelectorAll('[data-delete-goal]').forEach(btn => {
+        btn.onclick = async () => {
+          const id = btn.getAttribute('data-delete-goal');
+          if (!confirm('Delete this goal?')) return;
+          try {
+            await api.delete(`/goals/${id}`);
+            showToast('Goal deleted.', 'success');
+            await loadState();
+          } catch (err) {
+            showToast(err.message || 'Failed to delete goal.', 'error');
+          }
+        };
+      });
+
+      // Filter transactions
+      const searchInput = document.getElementById('txSearchInput');
+      const catFilter = document.getElementById('txCatFilter');
+      const typeFilter = document.getElementById('txTypeFilter');
+      if (searchInput && catFilter && typeFilter) {
+        const applyFilters = () => {
+          const query = searchInput.value.toLowerCase();
+          const catId = catFilter.value;
+          const type = typeFilter.value;
+
+          const filtered = appState.transactions.filter(t => {
+            const matchesQuery = !query || (t.description && t.description.toLowerCase().includes(query)) || (t.categoryName && t.categoryName.toLowerCase().includes(query));
+            const matchesCat = !catId || t.categoryId == catId;
+            const matchesType = !type || t.type === type;
+            return matchesQuery && matchesCat && matchesType;
+          });
+
+          const tbody = document.getElementById('txTableBody');
+          if (tbody) {
+            tbody.innerHTML = filtered.length ? filtered.map(t => `
+              <tr>
+                <td>
+                  <strong>${escapeHtml(t.description || 'Transaction')}</strong>
+                  <br><span style="font-size:12px;color:var(--text-muted);">${new Date(t.transactionDate).toLocaleDateString()}</span>
+                </td>
+                <td><span class="tag-pill" style="background:#f1f5f9;color:#334155;padding:4px 8px;border-radius:6px;font-size:12px;">${escapeHtml(t.categoryName || 'General')}</span></td>
+                <td>${escapeHtml(t.paymentMethod || 'UPI')}</td>
+                <td><span style="font-weight:600;color:${t.type === 'Income' ? 'var(--green)' : 'var(--text-main)'}">${t.type}</span></td>
+                <td class="${t.type === 'Income' ? 'money-pos' : 'money-neg'}">${formatSignedMoney(t.amount, t.type)}</td>
+                <td>
+                  <button class="btn danger" style="padding:4px 10px;font-size:12px;" data-delete-tx="${t.transactionId}">Delete</button>
+                </td>
+              </tr>
+            `).join('') : '<tr><td colspan="6"><div class="empty-state">No transactions match your query.</div></td></tr>';
+          }
+        };
+
+        searchInput.addEventListener('input', applyFilters);
+        catFilter.addEventListener('change', applyFilters);
+        typeFilter.addEventListener('change', applyFilters);
+      }
+    }
+
+    // CSV Import Modal Handler
+    document.getElementById('importBtn')?.addEventListener('click', () => {
+      openModal(`
+        <div class="modal">
+          <div class="modal-header">
+            <h3>Import Transactions CSV</h3>
+            <button class="close-btn" data-close-modal>×</button>
+          </div>
+          <form id="csvUploadForm">
+            <div class="input-group full" style="margin-bottom:16px;">
+              <label>Select CSV Bank Statement</label>
+              <input type="file" id="csvFileInput" accept=".csv" required style="padding-top:6px;" />
+            </div>
+            <div id="csvPreviewArea" style="margin-bottom:16px;max-height:220px;overflow-y:auto;display:none;"></div>
+            <div class="modal-actions">
+              <button class="btn" type="button" data-close-modal>Cancel</button>
+              <button class="btn primary" type="submit" id="csvSubmitBtn">Preview Statement</button>
+            </div>
+          </form>
+        </div>
+      `);
+
+      let previewData = null;
+      document.getElementById('csvUploadForm').onsubmit = async (e) => {
+        e.preventDefault();
+        const fileInput = document.getElementById('csvFileInput');
+        if (!fileInput.files[0]) return;
+
+        const submitBtn = document.getElementById('csvSubmitBtn');
+        if (!previewData) {
+          submitBtn.disabled = true;
+          submitBtn.textContent = 'Analyzing CSV...';
+          const formData = new FormData();
+          formData.append('file', fileInput.files[0]);
+
+          try {
+            previewData = await api.upload('/import/csv/preview', formData);
+            const previewArea = document.getElementById('csvPreviewArea');
+            previewArea.style.display = 'block';
+            previewArea.innerHTML = `
+              <div style="background:#f8fafc;padding:12px;border-radius:8px;border:1px solid var(--stroke);font-size:13px;">
+                <strong>Detected ${previewData.totalRows || (previewData.rows ? previewData.rows.length : 0)} rows</strong>
+                <p style="color:var(--text-muted);font-size:12px;margin-top:4px;">Ready to import into your account.</p>
+              </div>
+            `;
+            submitBtn.textContent = 'Confirm & Import All';
+            submitBtn.disabled = false;
+          } catch (err) {
+            showToast(err.message || 'Failed to parse CSV.', 'error');
+            submitBtn.textContent = 'Preview Statement';
+            submitBtn.disabled = false;
+          }
+        } else {
+          submitBtn.disabled = true;
+          submitBtn.textContent = 'Importing...';
+          try {
+            const rowsToImport = previewData.rows || [];
+            await api.post('/import/csv/confirm', {
+              transactions: rowsToImport
+            });
+            closeModal();
+            showToast('CSV statement imported successfully!', 'success');
+            await loadState();
+          } catch (err) {
+            showToast(err.message || 'Failed to import CSV rows.', 'error');
+          } finally {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Confirm & Import All';
+          }
+        }
+      };
+    });
+
+    // AI Chatbot Drawer & Event Handlers
+    document.addEventListener('DOMContentLoaded', () => {
+      const fab = document.getElementById('aiChatFab');
+      const drawer = document.getElementById('aiChatDrawer');
+      const closeBtn = document.getElementById('closeChatBtn');
+      const chatForm = document.getElementById('chatForm');
+      const chatInput = document.getElementById('chatInput');
+
+      if (fab && drawer) {
+        fab.addEventListener('click', () => drawer.classList.toggle('open'));
+      }
+      if (closeBtn && drawer) {
+        closeBtn.addEventListener('click', () => drawer.classList.remove('open'));
+      }
+
+      if (chatForm) {
+        chatForm.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const message = chatInput.value.trim();
+          if (!message) return;
+
+          appendChatBubble(message, 'user');
+          chatInput.value = '';
+
+          try {
+            const res = await api.post('/chat', { message });
+            appendChatBubble(res.answer || res.response || 'I have analyzed your financial context.', 'bot');
+          } catch (err) {
+            appendChatBubble('Sorry, I could not process your AI inquiry at this moment.', 'bot');
+          }
+        });
+      }
+
+      loadState();
+    });
+
+    function appendChatBubble(text, sender) {
+      const body = document.getElementById('chatBody');
+      const div = document.createElement('div');
+      div.className = `chat-bubble ${sender}`;
+      div.innerHTML = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+      body.appendChild(div);
+      body.scrollTop = body.scrollHeight;
+    }
+  </script>
 </body>
 </html>

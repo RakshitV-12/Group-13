@@ -3,20 +3,205 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login &amp; Register | Smart Expense Tracker</title>
+  <title>WalletWise AI - Secure Authentication</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link rel="stylesheet" href="css/style.css">
+  <style>
+    :root {
+      --primary: #5c4ee5;
+      --primary-hover: #4b3ecb;
+      --primary-soft: #efeaff;
+      --text-main: #101828;
+      --text-muted: #667085;
+      --stroke: #eaecf0;
+      --bg: #f8f9fc;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: radial-gradient(circle at top right, rgba(92, 78, 229, 0.08), transparent 40%),
+                  radial-gradient(circle at bottom left, rgba(16, 185, 129, 0.06), transparent 40%),
+                  #f4f5f8;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      color: var(--text-main);
+    }
+    .auth-wrapper {
+      width: 100%;
+      max-width: 440px;
+    }
+    .auth-card {
+      background: #ffffff;
+      border: 1px solid var(--stroke);
+      border-radius: 20px;
+      padding: 36px 32px;
+      box-shadow: 0 12px 36px rgba(16, 24, 40, 0.08);
+      position: relative;
+    }
+    .brand-header {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+    .brand-logo-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+      color: #ffffff;
+      display: inline-grid;
+      place-items: center;
+      font-size: 22px;
+      font-weight: 800;
+      box-shadow: 0 6px 18px rgba(79, 70, 229, 0.35);
+      margin-bottom: 12px;
+    }
+    .brand-title {
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--text-main);
+      letter-spacing: -0.03em;
+    }
+    .brand-tagline {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+    .auth-tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      background: #f1f5f9;
+      padding: 4px;
+      border-radius: 12px;
+      margin-bottom: 24px;
+    }
+    .auth-tab {
+      padding: 10px 14px;
+      text-align: center;
+      font-size: 14px;
+      font-weight: 600;
+      color: #64748b;
+      cursor: pointer;
+      border-radius: 8px;
+      transition: all 0.2s ease;
+    }
+    .auth-tab.active {
+      background: #ffffff;
+      color: var(--primary);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+    .form-group {
+      margin-bottom: 18px;
+      text-align: left;
+    }
+    .form-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: #334155;
+      margin-bottom: 6px;
+    }
+    .input-wrapper {
+      position: relative;
+    }
+    .input-wrapper i {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #94a3b8;
+      font-size: 14px;
+    }
+    .form-control {
+      width: 100%;
+      padding: 11px 14px 11px 40px;
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+      font-size: 14px;
+      color: #0f172a;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .form-control:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(92, 78, 229, 0.15);
+    }
+    .btn-submit {
+      width: 100%;
+      padding: 12px 18px;
+      background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+      color: #ffffff;
+      font-size: 14px;
+      font-weight: 700;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
+      margin-top: 8px;
+    }
+    .btn-submit:hover {
+      background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(79, 70, 229, 0.35);
+    }
+    .auth-alert {
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      margin-bottom: 16px;
+      display: none;
+    }
+    .auth-alert.error {
+      background: #fef2f2;
+      color: #dc2626;
+      border: 1px solid #fecaca;
+      display: block;
+    }
+    .auth-alert.success {
+      background: #ecfdf5;
+      color: #059669;
+      border: 1px solid #a7f3d0;
+      display: block;
+    }
+    .auth-footer {
+      text-align: center;
+      margin-top: 24px;
+      padding-top: 16px;
+      border-top: 1px solid var(--stroke);
+      font-size: 13px;
+    }
+    .auth-footer a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .auth-footer a:hover {
+      text-decoration: underline;
+    }
+  </style>
 </head>
 <body>
 
   <div class="auth-wrapper">
     <div class="auth-card">
-      <div style="text-align: center; margin-bottom: 24px;">
-        <div class="brand-icon" style="margin: 0 auto 12px; width: 48px; height: 48px; font-size: 24px;">
-          <i class="fas fa-wallet" style="color: white;"></i>
+      <div class="brand-header">
+        <div class="brand-logo-icon">
+          <i class="fas fa-wallet"></i>
         </div>
-        <h2 style="font-size: 1.5rem; font-weight: 800; color: var(--gray-900);">Smart Expense Tracker</h2>
-        <p style="font-size: 0.85rem; color: var(--gray-500); margin-top: 4px;">Secure Personal Finance &amp; AI Insights</p>
+        <h1 class="brand-title">WalletWise AI</h1>
+        <p class="brand-tagline">Smart Finance. Better Decisions.</p>
       </div>
 
       <div class="auth-tabs">
@@ -24,38 +209,60 @@
         <div id="registerTab" class="auth-tab">Create Account</div>
       </div>
 
-      <!-- Login Form -->
+      <!-- Alert Box -->
+      <div id="authAlert" class="auth-alert"></div>
+
+      <!-- Login Form (NO HARDCODED VALUES) -->
       <form id="loginForm">
         <div class="form-group">
-          <label class="form-label">Email Address</label>
-          <input type="email" id="loginEmail" class="form-control" placeholder="you@example.com" required value="rakshit.demo@example.com">
+          <label class="form-label" for="loginEmail">Email Address</label>
+          <div class="input-wrapper">
+            <i class="fas fa-envelope"></i>
+            <input type="email" id="loginEmail" class="form-control" placeholder="name@example.com" required autocomplete="email" value="">
+          </div>
         </div>
         <div class="form-group">
-          <label class="form-label">Password</label>
-          <input type="password" id="loginPassword" class="form-control" placeholder="••••••••" required value="Password@123">
+          <label class="form-label" for="loginPassword">Password</label>
+          <div class="input-wrapper">
+            <i class="fas fa-lock"></i>
+            <input type="password" id="loginPassword" class="form-control" placeholder="••••••••" required autocomplete="current-password" value="">
+          </div>
         </div>
-        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 8px;">Sign In</button>
+        <button type="submit" class="btn-submit">
+          Sign In <i class="fas fa-arrow-right"></i>
+        </button>
       </form>
 
       <!-- Register Form -->
       <form id="registerForm" style="display: none;">
         <div class="form-group">
-          <label class="form-label">Full Name</label>
-          <input type="text" id="regFullName" class="form-control" placeholder="e.g. John Doe" required>
+          <label class="form-label" for="regFullName">Full Name</label>
+          <div class="input-wrapper">
+            <i class="fas fa-user"></i>
+            <input type="text" id="regFullName" class="form-control" placeholder="e.g. Alex Johnson" required autocomplete="name" value="">
+          </div>
         </div>
         <div class="form-group">
-          <label class="form-label">Email Address</label>
-          <input type="email" id="regEmail" class="form-control" placeholder="you@example.com" required>
+          <label class="form-label" for="regEmail">Email Address</label>
+          <div class="input-wrapper">
+            <i class="fas fa-envelope"></i>
+            <input type="email" id="regEmail" class="form-control" placeholder="name@example.com" required autocomplete="email" value="">
+          </div>
         </div>
         <div class="form-group">
-          <label class="form-label">Password (Min. 6 characters)</label>
-          <input type="password" id="regPassword" class="form-control" placeholder="••••••••" required minlength="6">
+          <label class="form-label" for="regPassword">Password (Min. 6 characters)</label>
+          <div class="input-wrapper">
+            <i class="fas fa-lock"></i>
+            <input type="password" id="regPassword" class="form-control" placeholder="••••••••" required minlength="6" autocomplete="new-password" value="">
+          </div>
         </div>
-        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 8px;">Create Account</button>
+        <button type="submit" class="btn-submit">
+          Create Account <i class="fas fa-arrow-right"></i>
+        </button>
       </form>
 
-      <div style="text-align: center; margin-top: 24px; font-size: 0.8rem; color: var(--gray-400);">
-        <a href="index.html" style="color: var(--gray-500); text-decoration: none;"><i class="fas fa-arrow-left"></i> Back to Homepage</a>
+      <div class="auth-footer">
+        <a href="index.html"><i class="fas fa-arrow-left"></i> Back to Homepage</a>
       </div>
     </div>
   </div>
