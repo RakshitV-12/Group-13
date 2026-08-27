@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Redirecting to Settings...</title>
+  <script>
+    if (!localStorage.getItem('token')) {
+      window.location.replace("login.html");
+    } else {
+      window.location.replace("dashboard.html?tab=settings");
+    }
+  </script>
+</head>
+<body>
+</body>
+</html>
